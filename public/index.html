@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#c81e3a" />
+
+    <title>REST Server | utsab.space</title>
+    <meta name="description" content="A small REST API backend built with Express, TypeScript, and MongoDB. User CRUD and system metrics, documented in public." />
+    <meta name="author" content="Utsab Adhikari" />
+    <meta name="keywords" content="REST API, Express, TypeScript, MongoDB, Node.js, backend, Utsab Adhikari" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="rest.utsab.space" />
+    <meta property="og:title" content="REST Server | utsab.space" />
+    <meta property="og:description" content="A small REST API backend built with Express, TypeScript, and MongoDB." />
+    <meta property="og:url" content="https://rest.utsab.space/" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="REST Server | utsab.space" />
+    <meta name="twitter:description" content="A small REST API backend built with Express, TypeScript, and MongoDB." />
+    <style>
+        :root {
+            --bg-body: #ffffff;
+            --bg-secondary: #f9fafb;
+            --text-primary: #111827;
+            --text-muted: #4b5563;
+            --border-light: #e5e7eb;
+            --accent: #c81e3a;
+            --footer-bg: #111827;
+            --footer-text: #f9fafb;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --font-sans: system-ui, -apple-system, sans-serif;
+            --max-width: 1100px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 2.5rem;
+            }
+        }
+
+        .hero {
+            padding: 6rem 0 4rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .eyebrow .accent {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .title {
+            font-family: var(--font-mono);
+            font-size: 2.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .title {
+                font-size: 3.25rem;
+            }
+        }
+
+        .version {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: linear-gradient(90deg, rgba(200, 30, 58, 0.12), rgba(200, 30, 58, 0));
+            border-left: 3px solid var(--accent);
+            padding: 0.5rem 0.9rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 1.75rem;
+        }
+
+        .lede {
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: var(--text-muted);
+            max-width: 62ch;
+            margin-bottom: 1rem;
+        }
+
+        .hero__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn--primary {
+            background-color: var(--text-primary);
+            color: #fff;
+            border-color: var(--text-primary);
+        }
+
+        .btn--primary:hover {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn--outline {
+            background-color: transparent;
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        .btn--outline:hover {
+            border-color: var(--text-primary);
+        }
+
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section--tinted {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .section-title {
+            font-family: var(--font-mono);
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 1rem;
+        }
+
+        .section-intro {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 62ch;
+            margin-bottom: 2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2.5rem;
+            }
+        }
+
+        .grid--three {
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 640px) {
+            .grid--three {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .grid--three {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature {
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .feature:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .feature h3 {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        .card {
+            background: var(--bg-body);
+            border: 1px solid var(--border-light);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .card h3 {
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-secondary);
+            padding: 0.6rem 0.85rem;
+            border-radius: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-light);
+        }
+
+        .endpoint:last-child {
+            margin-bottom: 0;
+        }
+
+        .method {
+            font-weight: 700;
+            min-width: 4ch;
+            display: inline-block;
+        }
+
+        .method--get    { color: #3b82f6; }
+        .method--post   { color: #10b981; }
+        .method--put    { color: #f59e0b; }
+        .method--patch  { color: #f97316; }
+        .method--delete { color: #ef4444; }
+
+        .path {
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .info-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            background: var(--bg-body);
+            transition: border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .info-card:hover {
+            border-color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .info-card__label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .info-card__value {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .info-card__hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer__grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        @media (min-width: 768px) {
+            .footer__grid {
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 3rem;
+            }
+        }
+
+        .footer__title {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+            transition: color 0.15s ease;
+        }
+
+        .footer__title:hover {
+            color: var(--accent);
+        }
+
+        .footer__brand p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.92rem;
+            line-height: 1.65;
+            max-width: 42ch;
+        }
+
+        .footer__col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer__heading {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 0.25rem;
+        }
+
+        .footer__col a {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: color 0.15s ease;
+        }
+
+        .footer__col a:hover {
+            color: var(--accent);
+        }
+
+        .footer__bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        @media (min-width: 640px) {
+            .footer__bottom {
+                flex-direction: row;
+            }
+        }
+
+        .status-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pulse {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50%      { opacity: 0.4; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero">
+        <div class="container">
+            <div class="eyebrow">
+                <span>Backend</span>
+                <span>&middot;</span>
+                <span class="accent">REST API</span>
+            </div>
+
+            <h1 class="title">REST Server</h1>
+
+            <p class="version">v1.0.0 &nbsp;|&nbsp; Basic CRUD</p>
+
+            <p class="lede">
+                A small and reliable REST API backend built with Express, TypeScript, and MongoDB.
+                It handles user accounts and exposes basic system metrics for monitoring.
+            </p>
+            <p class="lede">
+                The code is organized so each part does one job. Routes handle HTTP, controllers handle logic,
+                and schemas keep the data clean. Passwords are hashed, requests are rate limited, and every
+                response comes back as JSON.
+            </p>
+
+            <div class="hero__actions">
+                <a href="/docs" class="btn btn--primary">Read the Docs</a>
+                <a href="/ui" class="btn btn--outline">Try the UI</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section section--tinted">
+            <div class="container">
+                <div class="grid">
+                    <div>
+                        <div class="eyebrow">
+                            <span>What it does</span>
+                        </div>
+                        <h2 class="section-title">Built for the basics, done right.</h2>
+                        <p class="lede" style="font-size: 1rem;">
+                            No bloated frameworks. Just the essentials you need to ship a working backend.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="feature">
+                            <h3>Clean data in, clean data out</h3>
+                            <p>Every request is checked against a schema before it reaches the database. Bad input
+                                gets rejected early with a clear error message.</p>
+                        </div>
+                        <div class="feature">
+                            <h3>Know what is happening</h3>
+                            <p>A single endpoint reports CPU usage, memory, and process uptime. Handy for uptime
+                                monitors and health checks.</p>
+                        </div>
+                        <div class="feature">
+                            <h3>Sensible security defaults</h3>
+                            <p>Helmet headers, CORS, request size limits, and rate limiting are all wired up out of
+                                the box.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="eyebrow">
+                    <span>Reference</span>
+                    <span>&middot;</span>
+                    <span class="accent">Endpoints</span>
+                </div>
+                <h2 class="section-title" style="margin-bottom: 2rem;">What you can call</h2>
+
+                <div class="grid">
+                    <div class="card">
+                        <h3>Users</h3>
+                        <p>Create, read, update, and delete user accounts.</p>
+
+                        <div class="endpoint">
+                            <span class="method method--get">GET</span>
+                            <span class="path">/api/users</span>
+                        </div>
+                        <div class="endpoint">
+                            <span class="method method--post">POST</span>
+                            <span class="path">/api/users</span>
+                        </div>
+                        <div class="endpoint">
+                            <span class="method method--put">PUT</span>
+                            <span class="path">/api/users/:id</span>
+                        </div>
+                        <div class="endpoint">
+                            <span class="method method--patch">PATCH</span>
+                            <span class="path">/api/users/:id</span>
+                        </div>
+                        <div class="endpoint">
+                            <span class="method method--delete">DEL</span>
+                            <span class="path">/api/users/:id</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>System</h3>
+                        <p>Hardware metrics and current server status.</p>
+
+                        <div class="endpoint">
+                            <span class="method method--get">GET</span>
+                            <span class="path">/api/system/metrics</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section--tinted">
+            <div class="container">
+                <div class="eyebrow">
+                    <span>Author</span>
+                    <span>&middot;</span>
+                    <span class="accent">Links</span>
+                </div>
+                <h2 class="section-title">Utsab Adhikari</h2>
+                <p class="section-intro">
+                    Reach out, follow along, or explore other projects.
+                </p>
+
+                <div class="grid grid--three">
+                    <a class="info-card" href="mailto:contact@utsabadhikari.dev">
+                        <span class="info-card__label">Email</span>
+                        <span class="info-card__value">contact@utsabadhikari.dev</span>
+                        <span class="info-card__hint">Say hello</span>
+                    </a>
+
+                    <a class="info-card" href="https://utsabadhikari.dev" target="_blank" rel="noopener noreferrer">
+                        <span class="info-card__label">Personal Site</span>
+                        <span class="info-card__value">utsabadhikari.dev</span>
+                        <span class="info-card__hint">Portfolio and writing</span>
+                    </a>
+
+                    <a class="info-card" href="https://utsab.space" target="_blank" rel="noopener noreferrer">
+                        <span class="info-card__label">Main Site</span>
+                        <span class="info-card__value">utsab.space</span>
+                        <span class="info-card__hint">Projects and experiments</span>
+                    </a>
+
+                    <a class="info-card" href="https://github.com/utsab-adhikari" target="_blank" rel="noopener noreferrer">
+                        <span class="info-card__label">GitHub</span>
+                        <span class="info-card__value">github.com/utsab-adhikari</span>
+                        <span class="info-card__hint">All repositories</span>
+                    </a>
+
+                    <a class="info-card" href="https://github.com/utsab-adhikari/rest-server" target="_blank" rel="noopener noreferrer">
+                        <span class="info-card__label">Project Repo</span>
+                        <span class="info-card__value">rest-server</span>
+                        <span class="info-card__hint">Source code for this API</span>
+                    </a>
+
+                    <a class="info-card" href="https://linkedin.com/in/utsabadhikari" target="_blank" rel="noopener noreferrer">
+                        <span class="info-card__label">LinkedIn</span>
+                        <span class="info-card__value">linkedin.com/in/utsabadhikari</span>
+                        <span class="info-card__hint">Professional profile</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand">
+                    <a href="/" class="footer__title">rest.utsab.space</a>
+                    <p>
+                        A small backend project by Utsab. Built to learn, break, and rebuild.
+                        Everything here is documented in public.
+                    </p>
+                </div>
+
+                <div class="footer__col">
+                    <span class="footer__heading">Project</span>
+                    <a href="/docs">API Docs</a>
+                    <a href="/ui">Interactive UI</a>
+                    <a href="https://github.com/utsab-adhikari/rest-server" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
+                </div>
+
+                <div class="footer__col">
+                    <span class="footer__heading">Elsewhere</span>
+                    <a href="https://github.com/utsab-adhikari" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <a href="https://linkedin.com/in/utsabadhikari" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="mailto:contact@utsabadhikari.dev">contact@utsabadhikari.dev</a>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <span>&copy; 2026 Utsab Adhikari &middot; Built in public</span>
+                <span class="status-live">
+                    <span class="pulse"></span>
+                    All systems operational
+                </span>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
