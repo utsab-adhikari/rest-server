@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-     <meta charset="utf-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#c81e3a" />
 
@@ -20,6 +20,7 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="REST Server | utsab.space" />
     <meta name="twitter:description" content="A small REST API backend built with Express, TypeScript, and MongoDB." />
+
     <style>
         :root {
             --bg-body: #ffffff;
@@ -28,6 +29,7 @@
             --text-muted: #4b5563;
             --border-light: #e5e7eb;
             --accent: #c81e3a;
+            --heroku: #430098;
             --footer-bg: #111827;
             --footer-text: #f9fafb;
             --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -333,6 +335,70 @@
             color: var(--text-muted);
         }
 
+        .hosting {
+            display: flex;
+            align-items: center;
+            gap: 1.75rem;
+            padding: 2rem;
+            background: var(--bg-body);
+            border: 1px solid var(--border-light);
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        @media (max-width: 640px) {
+            .hosting {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.25rem;
+                padding: 1.75rem;
+            }
+        }
+
+        .hosting__logo {
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+        }
+
+        .hosting__logo svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .hosting__text {
+            flex-grow: 1;
+        }
+
+        .hosting__label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .hosting__title {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+
+        .hosting__title .brand {
+            color: var(--heroku);
+        }
+
+        .hosting__desc {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 62ch;
+        }
+
         .footer {
             background-color: var(--footer-bg);
             color: var(--footer-text);
@@ -555,6 +621,30 @@
         </section>
 
         <section class="section section--tinted">
+            <div class="container">
+                <div class="eyebrow">
+                    <span>Infrastructure</span>
+                    <span>&middot;</span>
+                    <span class="accent">Hosting</span>
+                </div>
+
+                <div class="hosting">
+                    <div class="hosting__logo">
+                        <img src="/heroku.webp" alt="Heroku logo" height="64" width="64" />
+                    </div>
+                    <div class="hosting__text">
+                        <span class="hosting__label">Hosted on</span>
+                        <h3 class="hosting__title"><span class="brand">Heroku</span> Basic Dyno</h3>
+                        <p class="hosting__desc">
+                            The API runs on a single Heroku Basic Dyno with automatic SSL, zero downtime
+                            deploys, and metrics piped straight into the platform dashboard.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
             <div class="container">
                 <div class="eyebrow">
                     <span>Author</span>
